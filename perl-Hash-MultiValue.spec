@@ -4,14 +4,15 @@
 #
 Name     : perl-Hash-MultiValue
 Version  : 0.16
-Release  : 1
+Release  : 2
 URL      : https://cpan.metacpan.org/authors/id/A/AR/ARISTOTLE/Hash-MultiValue-0.16.tar.gz
 Source0  : https://cpan.metacpan.org/authors/id/A/AR/ARISTOTLE/Hash-MultiValue-0.16.tar.gz
 Source1  : http://http.debian.net/debian/pool/main/libh/libhash-multivalue-perl/libhash-multivalue-perl_0.16-1.debian.tar.xz
 Summary  : 'Store multiple values per key'
 Group    : Development/Tools
-License  : Artistic-1.0-Perl
-Requires: perl-Hash-MultiValue-man
+License  : Artistic-1.0 Artistic-1.0-Perl GPL-1.0
+Requires: perl-Hash-MultiValue-license = %{version}-%{release}
+BuildRequires : buildreq-cpan
 
 %description
 NAME
@@ -19,19 +20,28 @@ Hash::MultiValue - Store multiple values per key
 SYNOPSIS
 use Hash::MultiValue;
 
-%package man
-Summary: man components for the perl-Hash-MultiValue package.
+%package dev
+Summary: dev components for the perl-Hash-MultiValue package.
+Group: Development
+Provides: perl-Hash-MultiValue-devel = %{version}-%{release}
+
+%description dev
+dev components for the perl-Hash-MultiValue package.
+
+
+%package license
+Summary: license components for the perl-Hash-MultiValue package.
 Group: Default
 
-%description man
-man components for the perl-Hash-MultiValue package.
+%description license
+license components for the perl-Hash-MultiValue package.
 
 
 %prep
-tar -xf %{SOURCE1}
-cd ..
 %setup -q -n Hash-MultiValue-0.16
-mkdir -p %{_topdir}/BUILD/Hash-MultiValue-0.16/deblicense/
+cd ..
+%setup -q -T -D -n Hash-MultiValue-0.16 -b 1
+mkdir -p deblicense/
 mv %{_topdir}/BUILD/debian/* %{_topdir}/BUILD/Hash-MultiValue-0.16/deblicense/
 
 %build
@@ -56,10 +66,12 @@ make TEST_VERBOSE=1 test
 
 %install
 rm -rf %{buildroot}
+mkdir -p %{buildroot}/usr/share/package-licenses/perl-Hash-MultiValue
+cp LICENSE %{buildroot}/usr/share/package-licenses/perl-Hash-MultiValue/LICENSE
 if test -f Makefile.PL; then
-make pure_install PERL_INSTALL_ROOT=%{buildroot}
+make pure_install PERL_INSTALL_ROOT=%{buildroot} INSTALLDIRS=vendor
 else
-./Build install --installdirs=site --destdir=%{buildroot}
+./Build install --installdirs=vendor --destdir=%{buildroot}
 fi
 find %{buildroot} -type f -name .packlist -exec rm -f {} ';'
 find %{buildroot} -depth -type d -exec rmdir {} 2>/dev/null ';'
@@ -68,8 +80,12 @@ find %{buildroot} -type f -name '*.bs' -empty -exec rm -f {} ';'
 
 %files
 %defattr(-,root,root,-)
-/usr/lib/perl5/site_perl/5.26.1/Hash/MultiValue.pm
+/usr/lib/perl5/vendor_perl/5.26.1/Hash/MultiValue.pm
 
-%files man
+%files dev
 %defattr(-,root,root,-)
 /usr/share/man/man3/Hash::MultiValue.3
+
+%files license
+%defattr(0644,root,root,0755)
+/usr/share/package-licenses/perl-Hash-MultiValue/LICENSE
