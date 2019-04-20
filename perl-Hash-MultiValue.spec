@@ -4,11 +4,11 @@
 #
 Name     : perl-Hash-MultiValue
 Version  : 0.16
-Release  : 9
+Release  : 10
 URL      : https://cpan.metacpan.org/authors/id/A/AR/ARISTOTLE/Hash-MultiValue-0.16.tar.gz
 Source0  : https://cpan.metacpan.org/authors/id/A/AR/ARISTOTLE/Hash-MultiValue-0.16.tar.gz
 Source1  : http://http.debian.net/debian/pool/main/libh/libhash-multivalue-perl/libhash-multivalue-perl_0.16-1.debian.tar.xz
-Summary  : 'Store multiple values per key'
+Summary  : Perl/CPAN Module Hash::MultiValue: Store multiple values per key
 Group    : Development/Tools
 License  : Artistic-1.0 Artistic-1.0-Perl GPL-1.0
 Requires: perl-Hash-MultiValue-license = %{version}-%{release}
@@ -24,6 +24,7 @@ use Hash::MultiValue;
 Summary: dev components for the perl-Hash-MultiValue package.
 Group: Development
 Provides: perl-Hash-MultiValue-devel = %{version}-%{release}
+Requires: perl-Hash-MultiValue = %{version}-%{release}
 
 %description dev
 dev components for the perl-Hash-MultiValue package.
@@ -42,7 +43,7 @@ license components for the perl-Hash-MultiValue package.
 cd ..
 %setup -q -T -D -n Hash-MultiValue-0.16 -b 1
 mkdir -p deblicense/
-mv %{_topdir}/BUILD/debian/* %{_topdir}/BUILD/Hash-MultiValue-0.16/deblicense/
+cp -r %{_topdir}/BUILD/debian/* %{_topdir}/BUILD/Hash-MultiValue-0.16/deblicense/
 
 %build
 export http_proxy=http://127.0.0.1:9/
