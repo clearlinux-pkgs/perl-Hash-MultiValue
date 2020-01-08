@@ -4,14 +4,15 @@
 #
 Name     : perl-Hash-MultiValue
 Version  : 0.16
-Release  : 12
+Release  : 13
 URL      : https://cpan.metacpan.org/authors/id/A/AR/ARISTOTLE/Hash-MultiValue-0.16.tar.gz
 Source0  : https://cpan.metacpan.org/authors/id/A/AR/ARISTOTLE/Hash-MultiValue-0.16.tar.gz
 Source1  : http://http.debian.net/debian/pool/main/libh/libhash-multivalue-perl/libhash-multivalue-perl_0.16-1.debian.tar.xz
-Summary  : Perl/CPAN Module Hash::MultiValue: Store multiple values per key
+Summary  : 'Store multiple values per key'
 Group    : Development/Tools
 License  : Artistic-1.0 Artistic-1.0-Perl GPL-1.0
 Requires: perl-Hash-MultiValue-license = %{version}-%{release}
+Requires: perl-Hash-MultiValue-perl = %{version}-%{release}
 BuildRequires : buildreq-cpan
 
 %description
@@ -38,18 +39,28 @@ Group: Default
 license components for the perl-Hash-MultiValue package.
 
 
+%package perl
+Summary: perl components for the perl-Hash-MultiValue package.
+Group: Default
+Requires: perl-Hash-MultiValue = %{version}-%{release}
+
+%description perl
+perl components for the perl-Hash-MultiValue package.
+
+
 %prep
 %setup -q -n Hash-MultiValue-0.16
-cd ..
-%setup -q -T -D -n Hash-MultiValue-0.16 -b 1
+cd %{_builddir}
+tar xf %{_sourcedir}/libhash-multivalue-perl_0.16-1.debian.tar.xz
+cd %{_builddir}/Hash-MultiValue-0.16
 mkdir -p deblicense/
-cp -r %{_topdir}/BUILD/debian/* %{_topdir}/BUILD/Hash-MultiValue-0.16/deblicense/
+cp -r %{_builddir}/debian/* %{_builddir}/Hash-MultiValue-0.16/deblicense/
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
-export LANG=C
+export LANG=C.UTF-8
 if test -f Makefile.PL; then
 %{__perl} Makefile.PL
 make  %{?_smp_mflags}
@@ -59,7 +70,7 @@ else
 fi
 
 %check
-export LANG=C
+export LANG=C.UTF-8
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
@@ -68,7 +79,8 @@ make TEST_VERBOSE=1 test
 %install
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/perl-Hash-MultiValue
-cp LICENSE %{buildroot}/usr/share/package-licenses/perl-Hash-MultiValue/LICENSE
+cp %{_builddir}/Hash-MultiValue-0.16/LICENSE %{buildroot}/usr/share/package-licenses/perl-Hash-MultiValue/c8ca626d558babe5ef285a55ca640a4f3bb286e2
+cp %{_builddir}/Hash-MultiValue-0.16/deblicense/copyright %{buildroot}/usr/share/package-licenses/perl-Hash-MultiValue/2f348b33dad8824a6a47eace2b9907106611831b
 if test -f Makefile.PL; then
 make pure_install PERL_INSTALL_ROOT=%{buildroot} INSTALLDIRS=vendor
 else
@@ -81,7 +93,6 @@ find %{buildroot} -type f -name '*.bs' -empty -exec rm -f {} ';'
 
 %files
 %defattr(-,root,root,-)
-/usr/lib/perl5/vendor_perl/5.28.2/Hash/MultiValue.pm
 
 %files dev
 %defattr(-,root,root,-)
@@ -89,4 +100,9 @@ find %{buildroot} -type f -name '*.bs' -empty -exec rm -f {} ';'
 
 %files license
 %defattr(0644,root,root,0755)
-/usr/share/package-licenses/perl-Hash-MultiValue/LICENSE
+/usr/share/package-licenses/perl-Hash-MultiValue/2f348b33dad8824a6a47eace2b9907106611831b
+/usr/share/package-licenses/perl-Hash-MultiValue/c8ca626d558babe5ef285a55ca640a4f3bb286e2
+
+%files perl
+%defattr(-,root,root,-)
+/usr/lib/perl5/vendor_perl/5.30.1/Hash/MultiValue.pm
